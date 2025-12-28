@@ -1,0 +1,379 @@
+import React, { useState, useEffect } from 'react';
+import { 
+  Atom, Globe, Wrench, Activity, FlaskConical, 
+  Star, Brain, Gamepad2, Smartphone, Music, 
+  ChevronLeft, Info, Play, Maximize2, Menu, X
+} from 'lucide-react';
+
+// --- DADOS DAS INTERFACES (Core Content) ---
+const interfaces = [
+  {
+    id: 1,
+    title: "Ciência Viva Angola",
+    subtitle: "Saberes Ancestrais & Física Moderna",
+    icon: <Atom size={40} />,
+    color: "text-amber-400",
+    bg: "bg-amber-400/10",
+    border: "border-amber-400/30",
+    description: "Explore a física dos batuques, a aerodinâmica das embarcações tradicionais e a química da tinturaria natural.",
+    features: ["Acústica dos Tambores", "Mecânica dos Arcos", "Fermentação Natural"],
+    type: "Mesa Interativa"
+  },
+  {
+    id: 2,
+    title: "Ecosistemas de Angola",
+    subtitle: "Simulador Ambiental em Tempo Real",
+    icon: <Globe size={40} />,
+    color: "text-emerald-400",
+    bg: "bg-emerald-400/10",
+    border: "border-emerald-400/30",
+    description: "Tome decisões críticas sobre o Maiombe, Savanas e Litoral. Veja o impacto das suas escolhas em 50 anos.",
+    features: ["Gestão Florestal", "Impacto Climático", "Biodiversidade"],
+    type: "Simulação Video Wall"
+  },
+  {
+    id: 3,
+    title: "Lab. Invenções Africanas",
+    subtitle: "Engenharia & Prototipagem",
+    icon: <Wrench size={40} />,
+    color: "text-orange-400",
+    bg: "bg-orange-400/10",
+    border: "border-orange-400/30",
+    description: "Da metalurgia antiga à robótica moderna. Construa o seu próprio mecanismo virtual.",
+    features: ["Timeline Tecnológica", "Maker Space Virtual", "Desafios de Engenharia"],
+    type: "Criativo / Maker"
+  },
+  {
+    id: 4,
+    title: "Corpo Humano Expandido",
+    subtitle: "Saúde Pública & Biologia",
+    icon: <Activity size={40} />,
+    color: "text-rose-400",
+    bg: "bg-rose-400/10",
+    border: "border-rose-400/30",
+    description: "Uma viagem AR pelo corpo adaptada à realidade tropical. Entenda nutrição, doenças e prevenção.",
+    features: ["Scan Corporal AR", "Nutrição Angolana", "Defesa Imunológica"],
+    type: "Realidade Aumentada"
+  },
+  {
+    id: 5,
+    title: "Química Invisível",
+    subtitle: "A Ciência do Quotidiano",
+    icon: <FlaskConical size={40} />,
+    color: "text-cyan-400",
+    bg: "bg-cyan-400/10",
+    border: "border-cyan-400/30",
+    description: "Descubra as reações químicas na cozinha, na limpeza e na indústria local. Segurança e curiosidade.",
+    features: ["Reações Domésticas", "Moléculas 3D", "Segurança Química"],
+    type: "Bancada Virtual"
+  },
+  {
+    id: 6,
+    title: "Planetário Narrativo",
+    subtitle: "O Céu Austral & Mitologia",
+    icon: <Star size={40} />,
+    color: "text-violet-400",
+    bg: "bg-violet-400/10",
+    border: "border-violet-400/30",
+    description: "Navegação tradicional pelas estrelas cruzada com a astrofísica moderna da NASA.",
+    features: ["Mapa Estelar", "Narrativas Orais", "Exploração Espacial"],
+    type: "Imersivo / Domo"
+  },
+  {
+    id: 7,
+    title: "IA & Ética",
+    subtitle: "Inteligência Artificial Humanizada",
+    icon: <Brain size={40} />,
+    color: "text-fuchsia-400",
+    bg: "bg-fuchsia-400/10",
+    border: "border-fuchsia-400/30",
+    description: "Entenda como a IA aprende, os seus vieses e como pode ajudar na agricultura e saúde em Angola.",
+    features: ["Treine uma IA", "Ética de Algoritmos", "Futuro do Trabalho"],
+    type: "Painel Interativo"
+  },
+  {
+    id: 8,
+    title: "Jogos Científicos",
+    subtitle: "Gamificação Educativa",
+    icon: <Gamepad2 size={40} />,
+    color: "text-yellow-400",
+    bg: "bg-yellow-400/10",
+    border: "border-yellow-400/30",
+    description: "Aprender jogando. Desafios de energia, água e construção civil.",
+    features: ["Corrida Energética", "City Builder", "Quiz Científico"],
+    type: "Estação de Jogos"
+  },
+  {
+    id: 9,
+    title: "Guia Pessoal",
+    subtitle: "A Sua Visita Personalizada",
+    icon: <Smartphone size={40} />,
+    color: "text-blue-400",
+    bg: "bg-blue-400/10",
+    border: "border-blue-400/30",
+    description: "Conecte o seu telemóvel para levar o conhecimento consigo. Roteiros adaptados ao seu interesse.",
+    features: ["QR Code Connect", "Diário de Bordo", "Realidade Aumentada Web"],
+    type: "Mobile Companion"
+  },
+  {
+    id: 10,
+    title: "Ciência + Arte",
+    subtitle: "Harmonia, Som e Movimento",
+    icon: <Music size={40} />,
+    color: "text-pink-400",
+    bg: "bg-pink-400/10",
+    border: "border-pink-400/30",
+    description: "Veja o som, toque na luz. Uma instalação onde a física encontra a expressão artística angolana.",
+    features: ["Cimática (Som Visível)", "Física da Dança", "Luz Interativa"],
+    type: "Instalação Sensorial"
+  }
+];
+
+// --- COMPONENTE: TELA DE ATRAÇÃO (SCREENSAVER) ---
+const AttractScreen = ({ onWake }) => {
+  return (
+    <div onClick={onWake} className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-slate-950 cursor-pointer overflow-hidden">
+      <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 animate-pulse"></div>
+      
+      {/* Background Blobs Animation */}
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-500/20 rounded-full blur-3xl animate-bounce duration-[10s]"></div>
+      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-bounce duration-[15s]"></div>
+
+      <div className="z-10 text-center space-y-8">
+        <div className="inline-block p-4 border-2 border-cyan-500/50 rounded-full animate-spin-slow">
+          <Atom size={80} className="text-cyan-400 animate-pulse" />
+        </div>
+        <h1 className="text-6xl md:text-8xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500 tracking-tighter">
+          CCL
+        </h1>
+        <p className="text-xl md:text-3xl text-slate-300 font-light tracking-widest uppercase">
+          Centro de Ciências de Luanda
+        </p>
+        <div className="mt-12 animate-bounce">
+          <span className="px-8 py-3 bg-white/10 backdrop-blur-md rounded-full text-white border border-white/20 text-lg hover:bg-white/20 transition-all">
+            Toque para Iniciar a Experiência
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// --- COMPONENTE: DETALHE DA INTERFACE (MODAL) ---
+const InterfaceDetail = ({ item, onClose }) => {
+  const [activeTab, setActiveTab] = useState(0);
+  const [simulateProgress, setSimulateProgress] = useState(0);
+
+  // Simulação de carregamento/processamento ao clicar em botões
+  const handleSimulate = () => {
+    setSimulateProgress(0);
+    const interval = setInterval(() => {
+      setSimulateProgress((prev) => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          return 100;
+        }
+        return prev + 5;
+      });
+    }, 50);
+  };
+
+  return (
+    <div className="fixed inset-0 z-40 bg-slate-950/90 backdrop-blur-xl flex items-center justify-center p-4 md:p-8 animate-in fade-in zoom-in duration-300">
+      <div className="bg-slate-900 w-full max-w-6xl h-[90vh] rounded-3xl border border-slate-700 shadow-2xl overflow-hidden flex flex-col md:flex-row relative">
+        
+        {/* Close Button */}
+        <button onClick={onClose} className="absolute top-4 right-4 z-50 p-2 bg-slate-800 rounded-full hover:bg-red-500/20 hover:text-red-400 transition-colors">
+          <X size={24} />
+        </button>
+
+        {/* Left Side: Visuals & Simulation */}
+        <div className={`w-full md:w-2/3 ${item.bg} relative flex flex-col items-center justify-center p-8 border-b md:border-b-0 md:border-r border-slate-700/50`}>
+          <div className={`absolute inset-0 bg-gradient-to-br from-slate-950/50 to-transparent pointer-events-none`}></div>
+          
+          {/* Main Icon/Graphic */}
+          <div className="z-10 mb-8 transform hover:scale-110 transition-transform duration-500">
+             {React.cloneElement(item.icon, { size: 120, className: `${item.color} drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]` })}
+          </div>
+
+          <h2 className="z-10 text-4xl md:text-5xl font-bold text-white text-center mb-2">{item.title}</h2>
+          <span className={`z-10 px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest border ${item.border} ${item.color} bg-slate-950/50`}>
+            {item.type}
+          </span>
+
+          {/* Fake Simulation Interactive Area */}
+          <div className="z-10 mt-12 w-full max-w-md bg-slate-950/80 backdrop-blur rounded-xl p-6 border border-slate-700">
+            <div className="flex justify-between items-center mb-4">
+              <span className="text-slate-400 text-sm uppercase">Status da Simulação</span>
+              <span className={`text-sm font-bold ${item.color}`}>{simulateProgress === 100 ? "CONCLUÍDO" : simulateProgress > 0 ? "PROCESSANDO..." : "PRONTO"}</span>
+            </div>
+            <div className="w-full bg-slate-800 rounded-full h-2 mb-6">
+              <div 
+                className={`h-2 rounded-full transition-all duration-100 ${item.color.replace('text-', 'bg-')}`} 
+                style={{ width: `${simulateProgress}%` }}
+              ></div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <button 
+                onClick={handleSimulate}
+                className={`col-span-2 py-3 rounded-lg font-bold text-slate-950 transition-all active:scale-95 hover:brightness-110 ${item.color.replace('text-', 'bg-')}`}
+              >
+                {simulateProgress === 100 ? "Reiniciar Experiência" : "Iniciar Simulação"}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Side: Content & Info */}
+        <div className="w-full md:w-1/3 bg-slate-900 p-8 flex flex-col overflow-y-auto">
+          <h3 className="text-2xl font-semibold text-white mb-6">Detalhes do Módulo</h3>
+          
+          <div className="space-y-6">
+            <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+              <h4 className="flex items-center gap-2 text-slate-300 font-bold mb-2">
+                <Info size={18} /> Conceito
+              </h4>
+              <p className="text-slate-400 leading-relaxed text-sm">
+                {item.description}
+              </p>
+            </div>
+
+            <div>
+              <h4 className="text-slate-300 font-bold mb-3">Funcionalidades Principais</h4>
+              <ul className="space-y-3">
+                {item.features.map((feature, idx) => (
+                  <li key={idx} className="flex items-center gap-3 text-slate-400 bg-slate-950/30 p-3 rounded-lg border border-slate-800 hover:border-slate-600 transition-colors cursor-default group">
+                    <span className={`w-2 h-2 rounded-full ${item.color.replace('text-', 'bg-')} group-hover:scale-150 transition-transform`}></span>
+                    {feature}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="mt-auto pt-6 border-t border-slate-800">
+              <button className="w-full flex items-center justify-center gap-2 py-3 rounded-lg border border-slate-600 text-slate-300 hover:bg-slate-800 transition-colors">
+                <Maximize2 size={18} />
+                Expandir para Modo Professor
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// --- COMPONENTE: GRID DASHBOARD ---
+const Dashboard = ({ onItemClick }) => {
+  return (
+    <div className="w-full min-h-screen bg-slate-950 p-6 md:p-12 pb-24">
+      {/* Header */}
+      <header className="flex justify-between items-end mb-12 border-b border-slate-800 pb-6">
+        <div>
+          <h1 className="text-4xl md:text-6xl font-black text-white tracking-tighter mb-2">
+            CCL <span className="text-cyan-500">.</span>
+          </h1>
+          <p className="text-slate-400 text-lg max-w-xl">
+            Centro de Ciências de Luanda: Plataforma Integrada de Educação, Inovação e Cultura.
+          </p>
+        </div>
+        <div className="hidden md:block text-right">
+          <div className="text-cyan-400 font-mono text-xl">{new Date().toLocaleTimeString()}</div>
+          <div className="text-slate-500 text-sm">Luanda, Angola</div>
+        </div>
+      </header>
+
+      {/* Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {interfaces.map((item) => (
+          <div 
+            key={item.id}
+            onClick={() => onItemClick(item)}
+            className={`
+              group relative overflow-hidden rounded-2xl p-6 min-h-[220px] 
+              bg-slate-900 border border-slate-800 cursor-pointer 
+              transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-cyan-900/20 hover:border-cyan-500/30
+            `}
+          >
+            {/* Hover Gradient Effect */}
+            <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br from-transparent to-${item.color.split('-')[1]}-900/20`}></div>
+            
+            <div className="relative z-10 flex flex-col h-full justify-between">
+              <div className="flex justify-between items-start">
+                <div className={`p-3 rounded-xl ${item.bg} ${item.color} group-hover:bg-white group-hover:text-slate-900 transition-colors duration-300`}>
+                  {item.icon}
+                </div>
+                <span className="text-slate-600 text-xs font-mono uppercase tracking-widest group-hover:text-slate-400">
+                  {`0${item.id}`}
+                </span>
+              </div>
+              
+              <div>
+                <h3 className="text-2xl font-bold text-white mb-1 leading-tight group-hover:translate-x-1 transition-transform">{item.title}</h3>
+                <p className="text-sm text-slate-400 line-clamp-2">{item.subtitle}</p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      
+      {/* Footer */}
+      <footer className="mt-24 text-center text-slate-600 text-sm border-t border-slate-900 pt-8 flex flex-col md:flex-row justify-between items-center">
+        <span>© 2025 Centro de Ciências de Luanda. Todos os direitos reservados.</span>
+        <span className="mt-2 md:mt-0 opacity-50 hover:opacity-100 transition-opacity">Powered by Afrokódica Systems</span>
+      </footer>
+    </div>
+  );
+};
+
+// --- APP PRINCIPAL ---
+const App = () => {
+  const [isIdle, setIsIdle] = useState(true);
+  const [selectedItem, setSelectedItem] = useState(null);
+
+  // Auto-sleep timer logic (simulate museum kiosk behavior)
+  useEffect(() => {
+    let timeout;
+    const resetTimer = () => {
+      if (isIdle) return;
+      clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        setIsIdle(true);
+        setSelectedItem(null); // Fecha modais ao entrar em sleep
+      }, 60000 * 2); // 2 minutos sem interação
+    };
+
+    window.addEventListener('mousemove', resetTimer);
+    window.addEventListener('click', resetTimer);
+    window.addEventListener('touchstart', resetTimer);
+
+    return () => {
+      clearTimeout(timeout);
+      window.removeEventListener('mousemove', resetTimer);
+      window.removeEventListener('click', resetTimer);
+      window.removeEventListener('touchstart', resetTimer);
+    };
+  }, [isIdle]);
+
+  return (
+    <div className="min-h-screen bg-slate-950 font-sans selection:bg-cyan-500/30 selection:text-cyan-200">
+      {/* Estado 1: Screen Saver / Atração */}
+      {isIdle && <AttractScreen onWake={() => setIsIdle(false)} />}
+
+      {/* Estado 2: Plataforma Ativa */}
+      {!isIdle && (
+        <div className="animate-in fade-in duration-700">
+          <Dashboard onItemClick={setSelectedItem} />
+        </div>
+      )}
+
+      {/* Estado 3: Modal Aberto */}
+      {selectedItem && (
+        <InterfaceDetail item={selectedItem} onClose={() => setSelectedItem(null)} />
+      )}
+    </div>
+  );
+};
+
+export default App;
+
